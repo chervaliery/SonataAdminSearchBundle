@@ -11,9 +11,8 @@ class Pager extends BasePager
     protected function getPaginator()
     {
         if (is_null($this->paginator)) {
-            $this->paginator = $this->getQuery()->execute();
+            $this->paginator = $this->getQuery()->getPaginator();
         }
-
         return $this->paginator;
     }
 
@@ -31,10 +30,7 @@ class Pager extends BasePager
      */
     public function getResults()
     {
-        return $this->getPaginator()->getResults(
-            $this->getQuery()->getFirstResult(),
-            $this->getQuery()->getMaxResults()
-        )->toArray();
+        return $this->getQuery()->execute()->toArray();
     }
 
     /**

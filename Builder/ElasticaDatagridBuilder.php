@@ -23,6 +23,7 @@ use Sonata\AdminSearchBundle\ProxyQuery\ElasticaProxyQuery;
 use Sonata\AdminSearchBundle\Datagrid\Pager;
 use Sonata\AdminSearchBundle\Datagrid\Datagrid;
 use FOS\ElasticaBundle\Configuration\ManagerInterface;
+use Sonata\AdminSearchBundle\ProxyQuery\ProxyQuery;
 
 class ElasticaDatagridBuilder implements DatagridBuilderInterface
 {
@@ -60,7 +61,7 @@ class ElasticaDatagridBuilder implements DatagridBuilderInterface
     public function addFilter(DatagridInterface $datagrid, $type = null, FieldDescriptionInterface $fieldDescription, AdminInterface $admin)
     {
         // Try to wrap all types to search types
-    	if ($type == null) { 
+        if ($type == null) { 
             $guessType = $this->guesser->guessType($admin->getClass(), $fieldDescription->getName(), $admin->getModelManager());
             $type = $guessType->getType();
             $fieldDescription->setType($type);
@@ -73,7 +74,7 @@ class ElasticaDatagridBuilder implements DatagridBuilderInterface
                     $fieldDescription->setOption($name, $fieldDescription->getOption($name, $value));
                 }
             }
-    	}else{
+        }else{
             $fieldDescription->setType($type);
         }
         $this->fixFieldDescription($admin, $fieldDescription);
@@ -105,11 +106,16 @@ class ElasticaDatagridBuilder implements DatagridBuilderInterface
             array(),
             $defaultOptions
         );
-
-        $proxyQuery = new ElasticaProxyQuery(
-            $this->finderProvider->getFinderByAdmin($admin)
-        );
-
+        $proxyQuery = $admin->createQuery();
+        // if the default modelmanager query builder is used, we need to replace it with elastica
+        // if not, that means $admin->createQuery has been overriden by the user and return already an ElasticaProxyQuery object
+        if (! $proxyQuery instanceof ProxyQuery) {
+            if ($this->isSmart($admin, $values)) {
+            	$smartProxyQuery = new ElasticaProxyQuery ( $this->finderProvider->getFinderByAdmin ( $admin ));
+                $proxyQuery = new ProxyQuery($smartProxyQuery, $proxyQuery);
+            }
+        }
+//         $pager->setQuery($proxyQuery);
         return new Datagrid(
             $proxyQuery,
             $admin->getList(),
@@ -148,6 +154,17 @@ class ElasticaDatagridBuilder implements DatagridBuilderInterface
             }
 
             if (!in_array($key, $mappedFieldNames)) {
+                /*
+                 * We are in the case where a field is used as filter without being mapped in elastic search.
+                 * An ugly case would be to have a custom field used in the filter without mapping in the model, we need to control that
+                 */
+                $ret = $admin->getModelManager ()->getParentMetadataForProperty ( $admin->getClass(), $key, $admin->getModelManager());
+                list($metadata, $propertyName, $parentAssociationMappings) = $ret;
+                //Case if a filter is used in the filter but not linked to the ModelManager ("mapped" = false ) case
+                if (!$metadata->hasField($key)) {
+                     
+                    break;
+                }
                 // This filter field is not mapped in elasticsearch
                 // so we cannot use elasticsearch
                 $smart = false;

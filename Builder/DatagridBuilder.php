@@ -31,11 +31,15 @@ class DatagridBuilder implements DatagridBuilderInterface
 
     public function __construct(DatagridBuilderInterface $smartDatagridBuilder, $originalAdminDatagridBuilders=array())
     {
+    	if (!$smartDatagridBuilder instanceof ElasticaDatagridBuilder) {
+    		throw new \InvalidArgumentException("This class should be an ElasticaDatagridBuilder instance");
+    	}
+    	
         $this->smartDatagridBuilder          = $smartDatagridBuilder;
-        $this->originalAdminDatagridBuilders = $originalAdminDatagridBuilders;
+        $this->originalAdminDatagridBuilders = $originalAdminDatagridBuilders;        
     }
 
-    private function getAdminDatagridBuilder($admin, $smartDatagrid=true)
+    private function getAdminDatagridBuilder(AdminInterface $admin, $smartDatagrid=true)
     {
         if ($smartDatagrid) {
             return $this->smartDatagridBuilder;
