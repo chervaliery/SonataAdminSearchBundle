@@ -40,11 +40,11 @@ class ElasticaDatagridBuilder implements DatagridBuilderInterface
         FinderProviderInterface $finderProvider,
         ManagerInterface $configManager
     ) {
-        $this->formFactory             = $formFactory;
-        $this->filterFactory           = $filterFactory;
-        $this->guesser                 = $guesser;
-        $this->finderProvider          = $finderProvider;
-        $this->configManager           = $configManager;
+        $this->formFactory = $formFactory;
+        $this->filterFactory = $filterFactory;
+        $this->guesser = $guesser;
+        $this->finderProvider = $finderProvider;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -61,7 +61,7 @@ class ElasticaDatagridBuilder implements DatagridBuilderInterface
     public function addFilter(DatagridInterface $datagrid, $type = null, FieldDescriptionInterface $fieldDescription, AdminInterface $admin)
     {
         // Try to wrap all types to search types
-        if ($type == null) { 
+        if ($type == null) {
             $guessType = $this->guesser->guessType($admin->getClass(), $fieldDescription->getName(), $admin->getModelManager());
             $type = $guessType->getType();
             $fieldDescription->setType($type);
@@ -74,7 +74,7 @@ class ElasticaDatagridBuilder implements DatagridBuilderInterface
                     $fieldDescription->setOption($name, $fieldDescription->getOption($name, $value));
                 }
             }
-        }else{
+        } else {
             $fieldDescription->setType($type);
         }
         $this->fixFieldDescription($admin, $fieldDescription);
@@ -115,7 +115,6 @@ class ElasticaDatagridBuilder implements DatagridBuilderInterface
                 $proxyQuery = new ProxyQuery($smartProxyQuery, $proxyQuery);
             }
         }
-//         $pager->setQuery($proxyQuery);
         return new Datagrid(
             $proxyQuery,
             $admin->getList(),
@@ -126,7 +125,7 @@ class ElasticaDatagridBuilder implements DatagridBuilderInterface
     }
 
     /**
-     * Returns true if this datagrid builder can process these values
+     * Returns true if this datagrid builder can process these values.
      */
     public function isSmart(AdminInterface $admin, array $values = array())
     {
@@ -142,7 +141,7 @@ class ElasticaDatagridBuilder implements DatagridBuilderInterface
         // Compare to the fields on wich the search apply
         $smart = true;
 
-        foreach ($values as $key=>$value) {
+        foreach ($values as $key => $value) {
             if (!is_array($value) || !isset($value['value'])) {
                 // This is not a filter field
                 continue;
@@ -155,14 +154,20 @@ class ElasticaDatagridBuilder implements DatagridBuilderInterface
 
             if (!in_array($key, $mappedFieldNames)) {
                 /*
-                 * We are in the case where a field is used as filter without being mapped in elastic search.
-                 * An ugly case would be to have a custom field used in the filter without mapping in the model, we need to control that
+                 * We are in the case where a field is used as filter
+                 * without being mapped in elastic search.
+                 * An ugly case would be to have a custom field used in the filter
+                 * without mapping in the model, we need to control that
                  */
-                $ret = $admin->getModelManager ()->getParentMetadataForProperty ( $admin->getClass(), $key, $admin->getModelManager());
+                $ret = $admin->getModelManager()->getParentMetadataForProperty(
+                    $admin->getClass(),
+                    $key,
+                    $admin->getModelManager()
+                );
+
                 list($metadata, $propertyName, $parentAssociationMappings) = $ret;
                 //Case if a filter is used in the filter but not linked to the ModelManager ("mapped" = false ) case
                 if (!$metadata->hasField($key)) {
-                     
                     break;
                 }
                 // This filter field is not mapped in elasticsearch
