@@ -14,29 +14,73 @@ namespace Sonata\AdminSearchBundle\ProxyQuery;
 use Elastica\Search;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
+use Sonata\AdminBundle\Model\ModelManagerInterface;
 
 class ElasticaProxyQuery implements ProxyQueryInterface
 {
     private $finder;
     private $query;
     private $boolQuery;
+    private $queryBuilder;
+    private $paginator = null;
 
-    public function __construct(
-        TransformedFinder $finder
-    ) {
+    
+    
+    /**
+     * @var array
+     */
+    protected $sortBy;
+    
+    /**
+     * @var array
+     */
+    protected $sortOrder;
+    
+    /**
+     * @var integer
+     */
+    protected $firstResult;
+    
+    /**
+     * @var integer
+     */
+    protected $maxResults;
+    
+    /**
+     * @var array
+     */
+    protected $results;
+    
+    
+    
+    public function __construct( TransformedFinder $finder) {
         $this->finder = $finder;
         $this->query = new \Elastica\Query();
-        $this->boolQuery = new \Elastica\Query\Bool();
+	  	$this->boolQuery = new \Elastica\Query\Bool();
+        
     }
+    
+	
+	public function getPaginator() {
+		
+		if ($this->paginator == null) {
+			$this->paginator = $this->finder->createPaginatorAdapter(
+					$this->query, array(
+							Search::OPTION_SIZE => $this->getMaxResults(),
+							Search::OPTION_FROM => $this->getFirstResult(),
+					)
+			);
+		}
+		return $this->paginator;
+	}
 
     /**
      * {@inheritdoc}
      */
     public function execute(array $params = array(), $hydrationMode = null)
     {
-        // TODO find method names
 
-        // Sorted field and sort order
+        	// Sorted field and sort order
         $sortBy = $this->getSortBy();
         $sortOrder = $this->getSortOrder();
 
@@ -45,36 +89,12 @@ class ElasticaProxyQuery implements ProxyQueryInterface
         }
 
         return $this->finder->createPaginatorAdapter(
-            $this->query, array(
-                Search::OPTION_SIZE => $this->getMaxResults(),
-                Search::OPTION_FROM => $this->getFirstResult(),
-        ));
+		  			$this->query, array(
+		  					Search::OPTION_SIZE => $this->getMaxResults(),
+		  					Search::OPTION_FROM => $this->getFirstResult(),
+		  			)
+	  			);
     }
-
-    /**
-     * @var array
-     */
-    protected $sortBy;
-
-    /**
-     * @var array
-     */
-    protected $sortOrder;
-
-    /**
-     * @var integer
-     */
-    protected $firstResult;
-
-    /**
-     * @var integer
-     */
-    protected $maxResults;
-
-    /**
-     * @var array
-     */
-    protected $results;
 
     /**
      * {@inheritdoc}
