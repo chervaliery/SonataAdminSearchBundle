@@ -32,9 +32,9 @@ class ProxyQuery implements ProxyQueryInterface
     }
     
     
-    private function getAdminProxyQuery($smart = true)
+    public function getQuery()
     {
-    	if ($smart) {
+    	if ($this->smart) {
     		return $this->smartProxyQuery;
     	}
     	return $this->originalProxyQuery;
@@ -68,7 +68,7 @@ class ProxyQuery implements ProxyQueryInterface
     
     public function setSortBy($parentAssociationMappings, $fieldMapping)
     {
-		$this->getAdminProxyQuery( $this->smart)->setSortBy($parentAssociationMappings, $fieldMapping);
+		$this->getQuery()->setSortBy($parentAssociationMappings, $fieldMapping);
 
         return $this;
     }
@@ -78,7 +78,7 @@ class ProxyQuery implements ProxyQueryInterface
      */
     public function getSortBy()
     {
-        return $this->getAdminProxyQuery( $this->smart)->getSortBy();
+        return $this->getQuery()->getSortBy();
     }
 
     /**
@@ -86,7 +86,7 @@ class ProxyQuery implements ProxyQueryInterface
      */
     public function setSortOrder($sortOrder)
     {
-        $this->getAdminProxyQuery( $this->smart)->setSortOrder($sortOrder);
+        $this->getQuery()->setSortOrder($sortOrder);
 
         return $this;
     }
@@ -96,7 +96,7 @@ class ProxyQuery implements ProxyQueryInterface
      */
     public function getSortOrder()
     {
-    	return $this->getAdminProxyQuery( $this->smart)->getSortOrder();
+    	return $this->getQuery()->getSortOrder();
     }
 
     /**
@@ -104,7 +104,7 @@ class ProxyQuery implements ProxyQueryInterface
      */
     public function setFirstResult($firstResult)
     {
-        $this->getAdminProxyQuery( $this->smart)->setFirstResult($firstResult);
+        $this->getQuery()->setFirstResult($firstResult);
 
         return $this;
     }
@@ -114,7 +114,7 @@ class ProxyQuery implements ProxyQueryInterface
      */
     public function getFirstResult()
     {
-        return $this->getAdminProxyQuery( $this->smart)->getFirstResult();
+        return $this->getQuery()->getFirstResult();
     }
 
     /**
@@ -122,7 +122,7 @@ class ProxyQuery implements ProxyQueryInterface
      */
     public function setMaxResults($maxResults)
     {
-        $this->getAdminProxyQuery( $this->smart)->setMaxResults($maxResults);
+        $this->getQuery()->setMaxResults($maxResults);
 
         return $this;
     }
@@ -132,7 +132,7 @@ class ProxyQuery implements ProxyQueryInterface
      */
     public function getMaxResults()
     {
-        return $this->getAdminProxyQuery( $this->smart)->getMaxResults();
+        return $this->getQuery()->getMaxResults();
     }
 
     /**
@@ -140,7 +140,7 @@ class ProxyQuery implements ProxyQueryInterface
      */
     public function getResults()
     {
-        return $this->getAdminProxyQuery( $this->smart)->getResults();
+        return $this->getQuery()->getResults();
     }
 
     public function getSingleScalarResult()

@@ -36,7 +36,7 @@ class DatagridBuilder implements DatagridBuilderInterface
     	}
     	
         $this->smartDatagridBuilder          = $smartDatagridBuilder;
-        $this->originalAdminDatagridBuilders = $originalAdminDatagridBuilders;        
+        $this->originalAdminDatagridBuilders = $originalAdminDatagridBuilders;
     }
 
     private function getAdminDatagridBuilder(AdminInterface $admin, $smartDatagrid=true)

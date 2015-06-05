@@ -30,22 +30,22 @@ class ElasticaProxyQuery implements ProxyQueryInterface
      * @var array
      */
     protected $sortBy;
-    
+
     /**
      * @var array
      */
     protected $sortOrder;
-    
+
     /**
      * @var integer
      */
     protected $firstResult;
-    
+
     /**
      * @var integer
      */
     protected $maxResults;
-    
+
     /**
      * @var array
      */
@@ -79,7 +79,6 @@ class ElasticaProxyQuery implements ProxyQueryInterface
      */
     public function execute(array $params = array(), $hydrationMode = null)
     {
-
         	// Sorted field and sort order
         $sortBy = $this->getSortBy();
         $sortOrder = $this->getSortOrder();
