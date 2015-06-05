@@ -140,23 +140,17 @@ class ElasticaDatagridBuilder implements DatagridBuilderInterface
         $mapping = $typeConfiguration->getMapping();
         $mappedFieldNames = array_keys($mapping['properties']);
 
-	print_r($mappedFieldNames);
-
         // Compare to the fields on wich the search apply
         $smart = true;
 
         foreach ($values as $key => $value) {
-	    echo $key;
-
             if (!is_array($value) || !isset($value['value'])) {
-		echo " hey ";
                 // This is not a filter field
                 continue;
             }
 
             if (!$value['value']) {
                 // No value set on the filter field
-		echo " ho ";
                 continue;
             }
 
@@ -172,11 +166,9 @@ class ElasticaDatagridBuilder implements DatagridBuilderInterface
                     $key,
                     $admin->getModelManager()
                 );
-		echo " le nouveau ";
                 list($metadata, $propertyName, $parentAssociationMappings) = $ret;
                 //Case if a filter is used in the filter but not linked to the ModelManager ("mapped" = false ) case
                 if (!$metadata->hasField($key)) {
-		    echo " son de ";
                     break;
                 }
                 // This filter field is not mapped in elasticsearch
@@ -185,8 +177,6 @@ class ElasticaDatagridBuilder implements DatagridBuilderInterface
                 break;
             }
         }
-	echo " de manau ";
-	echo $smart;
         return $smart;
     }
 }
