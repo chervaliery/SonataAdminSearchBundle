@@ -208,6 +208,12 @@ class ElasticaProxyQuery implements ProxyQueryInterface
         $this->query = new \Elastica\Query($this->boolQuery);
     }
 
+    public function addShould($args)
+    {
+        $this->boolQuery->addShould($args);
+        $this->query = new \Elastica\Query($this->boolQuery);
+    }
+
     /**
      * {@inheritdoc}
      */

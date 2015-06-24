@@ -167,7 +167,12 @@ class ProxyQuery implements ProxyQueryInterface
     {
       $this->smartProxyQuery->addMustNot($args);
     }
-    
+
+    public function addShould($args)
+    {
+      $this->smartProxyQuery->addShould($args);
+    }
+
     public function getQueryBuilder() 
     {
     	$this->smart = false;
